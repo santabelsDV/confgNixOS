@@ -14,6 +14,7 @@
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
+  boot.loader.systemd-boot.configurationLimit = 6;
   boot.loader.efi.canTouchEfiVariables = true;
 
   networking.hostName = "nixos"; # Define your hostname.
@@ -48,8 +49,8 @@
   services.xserver.enable = true;
 
   # Enable the GNOME Desktop Environment.
-  services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
+  services.displayManager.gdm.enable = true;
+  services.desktopManager.gnome.enable = true;
 
   # Configure keymap in X11
   services.xserver.xkb = {
@@ -105,36 +106,42 @@
   hardware.graphics.enable = true;
   
   hardware.nvidia = {
-    # Обов'язково для Wayland і сучасних X11
     modesetting.enable = true;
-
-    # Використовувати закриті драйвери ядра
     open = false;
-
-    # Доступ до панелі налаштувань NVIDIA
     nvidiaSettings = true;
-
-    # Обираємо стабільну версію драйвера
     package = config.boot.kernelPackages.nvidiaPackages.stable;
 
-    # Вмикаємо динамічне керування живленням.
-    # Це дозволить відеокарті RTX 4050 повністю засинати, коли вона не використовується.
     powerManagement.enable = true;
     powerManagement.finegrained = true;
 
-    # Налаштування гібридної графіки (PRIME Offload)
     prime = {
       offload = {
         enable = true;
-        enableOffloadCmd = true; # Додає зручну команду nvidia-offload
+        enableOffloadCmd = true;
       };
-      
-      # Ваші Bus ID з lspci
       intelBusId = "PCI:0:2:0";
       nvidiaBusId = "PCI:1:0:0";
     };
   };
 
+  # 3. Виправлена спеціалізація
+  specialisation = {
+    gaming.configuration = {
+      system.nixos.tags = [ "gaming" ];
+      
+      hardware.nvidia = {
+        # В режимі Sync енергозбереження має бути вимкнене
+        powerManagement.enable = lib.mkForce false;
+        powerManagement.finegrained = lib.mkForce false;
+        
+        prime = {
+          offload.enable = lib.mkForce false;
+          offload.enableOffloadCmd = lib.mkForce false;
+          sync.enable = lib.mkForce true;
+        };
+      };
+    };
+  };
 
 
 

@@ -8,9 +8,10 @@
   home.packages = [
     pkgs.zip
     pkgs.gnomeExtensions.blur-my-shell
+    pkgs.gnomeExtensions.hide-top-bar
+    pkgs.gnomeExtensions.caffeine
     pkgs.gnome-shell-extensions
     pkgs.gnome-tweaks
-    pkgs.gnomeExtensions.hide-top-bar
   ];
 
   dconf.settings = {
@@ -19,6 +20,7 @@
       enabled-extensions = [
         "blur-my-shell@aunetx"
         "hidetopbar@mathieu.bidon.ca"
+        "caffeine@patapon.info"
       ];
     };
   };
