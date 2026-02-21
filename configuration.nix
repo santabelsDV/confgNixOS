@@ -94,51 +94,47 @@
   # Install firefox.
   programs.firefox.enable = true;
 
+  # Вказуємо використовувати пропрієтарний драйвер
+  services.xserver.videoDrivers = [ "nvidia" ];
 
-  # ---------------------------------------------------------
-  # БАЗОВИЙ ПРОФІЛЬ: ТІЛЬКИ INTEL (Економія батареї)
-  # ---------------------------------------------------------
-  
+  # Дозволяємо встановлення пропрієтарних програм (необхідно для NVIDIA, Discord, Steam тощо)
   nixpkgs.config.allowUnfree = true;
+
+  # Вмикаємо підтримку графічного прискорення (OpenGL/Vulkan)
   hardware.graphics.enable = true;
-
-  # Додаємо модулі NVIDIA у чорний список, щоб вони взагалі не завантажувались
-  # і дискретна карта не витрачала енергію
-  boot.blacklistedKernelModules = [ "nouveau" "nvidia" "nvidia_drm" "nvidia_modeset" ];
-
-  # ---------------------------------------------------------
-  # СПЕЦІАЛІЗАЦІЯ: ТІЛЬКИ NVIDIA (Максимальна продуктивність)
-  # ---------------------------------------------------------
   
-  specialisation.nvidia.configuration = {
-    # Цей тег ви побачите в меню завантаження (GRUB/systemd-boot)
-    system.nixos.tags = [ "nvidia-only" ];
+  hardware.nvidia = {
+    # Обов'язково для Wayland і сучасних X11
+    modesetting.enable = true;
 
-    # Прибираємо чорний список модулів для цього профілю
-    boot.blacklistedKernelModules = lib.mkForce [ ];
+    # Використовувати закриті драйвери ядра
+    open = false;
 
-    # Вказуємо використовувати пропрієтарний драйвер
-    services.xserver.videoDrivers = [ "nvidia" ];
+    # Доступ до панелі налаштувань NVIDIA
+    nvidiaSettings = true;
 
-    hardware.nvidia = {
-      modesetting.enable = true;
-      powerManagement.enable = false;
-      powerManagement.finegrained = false;
-      open = false;
-      nvidiaSettings = true;
-      package = config.boot.kernelPackages.nvidiaPackages.stable;
+    # Обираємо стабільну версію драйвера
+    package = config.boot.kernelPackages.nvidiaPackages.stable;
 
-      prime = {
-        # Вмикаємо режим Sync замість Offload
-        # NVIDIA рендерить абсолютно все
-        sync.enable = true;
-        
-        # Ваші Bus ID
-        intelBusId = "PCI:0:2:0";
-        nvidiaBusId = "PCI:1:0:0";
+    # Вмикаємо динамічне керування живленням.
+    # Це дозволить відеокарті RTX 4050 повністю засинати, коли вона не використовується.
+    powerManagement.enable = true;
+    powerManagement.finegrained = true;
+
+    # Налаштування гібридної графіки (PRIME Offload)
+    prime = {
+      offload = {
+        enable = true;
+        enableOffloadCmd = true; # Додає зручну команду nvidia-offload
       };
+      
+      # Ваші Bus ID з lspci
+      intelBusId = "PCI:0:2:0";
+      nvidiaBusId = "PCI:1:0:0";
     };
   };
+
+
 
 
 
@@ -154,6 +150,7 @@
      nodejs_24
      brave
      git
+     telegram-desktop
 
   ];
 
