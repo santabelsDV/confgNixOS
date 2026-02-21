@@ -2,12 +2,13 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
+{ config, pkgs,lib, ... }:
 
 {
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
+      ./home/home.nix
     ];
 
   # Bootloader.
@@ -93,8 +94,55 @@
   # Install firefox.
   programs.firefox.enable = true;
 
-  # Allow unfree packages
+
+  # ---------------------------------------------------------
+  # БАЗОВИЙ ПРОФІЛЬ: ТІЛЬКИ INTEL (Економія батареї)
+  # ---------------------------------------------------------
+  
   nixpkgs.config.allowUnfree = true;
+  hardware.graphics.enable = true;
+
+  # Додаємо модулі NVIDIA у чорний список, щоб вони взагалі не завантажувались
+  # і дискретна карта не витрачала енергію
+  boot.blacklistedKernelModules = [ "nouveau" "nvidia" "nvidia_drm" "nvidia_modeset" ];
+
+  # ---------------------------------------------------------
+  # СПЕЦІАЛІЗАЦІЯ: ТІЛЬКИ NVIDIA (Максимальна продуктивність)
+  # ---------------------------------------------------------
+  
+  specialisation.nvidia.configuration = {
+    # Цей тег ви побачите в меню завантаження (GRUB/systemd-boot)
+    system.nixos.tags = [ "nvidia-only" ];
+
+    # Прибираємо чорний список модулів для цього профілю
+    boot.blacklistedKernelModules = lib.mkForce [ ];
+
+    # Вказуємо використовувати пропрієтарний драйвер
+    services.xserver.videoDrivers = [ "nvidia" ];
+
+    hardware.nvidia = {
+      modesetting.enable = true;
+      powerManagement.enable = false;
+      powerManagement.finegrained = false;
+      open = false;
+      nvidiaSettings = true;
+      package = config.boot.kernelPackages.nvidiaPackages.stable;
+
+      prime = {
+        # Вмикаємо режим Sync замість Offload
+        # NVIDIA рендерить абсолютно все
+        sync.enable = true;
+        
+        # Ваші Bus ID
+        intelBusId = "PCI:0:2:0";
+        nvidiaBusId = "PCI:1:0:0";
+      };
+    };
+  };
+
+
+
+
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
