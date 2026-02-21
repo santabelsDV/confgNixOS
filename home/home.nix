@@ -1,36 +1,27 @@
 { config, pkgs, ... }:
 
 {
-  imports =
-    [
-      <home-manager/nixos> 
-    ];
+  home.username = "sasha";
+  home.homeDirectory = "/home/sasha";
+  home.stateVersion = "25.11";
 
-  # Оптимізація: наказуємо Home Manager використовувати системну версію Nixpkgs
-  # Це економить місце на диску і час збірки
-  home-manager.useGlobalPkgs = true;
-  home-manager.useUserPackages = true;
+  home.packages = [
+    pkgs.zip
+    pkgs.gnomeExtensions.blur-my-shell
+    pkgs.gnome-shell-extensions
+    pkgs.gnome-tweaks
+    pkgs.gnomeExtensions.hide-top-bar
+  ];
 
-  # Конфігурація середовища для вашого користувача
-  home-manager.users.sasha = { pkgs, ... }: {
-    
-    # 1. Встановлення програм ТІЛЬКИ для sasha
-    home.packages = with pkgs; [
-      
-      zip
-      
-    ];   
-
-    programs.bash = {
-      enable = true;
-      shellAliases = {
-        update = "sudo nixos-rebuild switch";
-        ll = "ls -alF";
-      };
+  dconf.settings = {
+    "org/gnome/shell" = {
+      disable-user-extensions = false;
+      enabled-extensions = [
+        "blur-my-shell@aunetx"
+        "hidetopbar@mathieu.bidon.ca"
+      ];
     };
-
-    # 3. Версія стану Home Manager (має збігатися з system.stateVersion)
-    home.stateVersion = "25.11";
   };
 
+  programs.home-manager.enable = true;
 }
