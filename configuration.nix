@@ -9,6 +9,7 @@
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
       ./home/home.nix
+      ./apps/default.nix
     ];
 
   # Bootloader.
@@ -150,7 +151,7 @@
      nodejs_24
      brave
      git
-     telegram-desktop
+    
 
   ];
 
