@@ -11,5 +11,9 @@ nix.settings = {
   experimental-features = [ "nix-command" "flakes" ];
 };
 
+programs.bash.interactiveShellInit = ''
+  eval "$(direnv hook bash)"
+'';
+
 
 }
