@@ -9,6 +9,7 @@
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
       ./apps/default.nix
+      ./dev/default.nix
     ];
 
   # Bootloader.
