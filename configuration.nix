@@ -4,13 +4,21 @@
 
 { config, pkgs,lib, ... }:
 
+let
+  # Імпортуємо нестабільний канал
+  unstable = import <nixos-unstable> { config = { allowUnfree = true; }; };
+in
 {
+
+
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
       ./apps/default.nix
       ./dev/default.nix
     ];
+
+    
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
@@ -148,7 +156,7 @@
   environment.systemPackages = with pkgs; [
   #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
   #  wget
-     vscode
+     unstable.vscode
      vesktop
      nodejs_24
      brave
