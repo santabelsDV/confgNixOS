@@ -58,6 +58,8 @@ in
 
   # Enable the GNOME Desktop Environment.
   services.displayManager.gdm.enable = true;
+  services.displayManager.sddm.enable = false;
+  
   services.desktopManager.gnome.enable = true;
 
   # Configure keymap in X11
@@ -119,14 +121,15 @@ in
     nvidiaSettings = true;
     package = config.boot.kernelPackages.nvidiaPackages.stable;
 
-    powerManagement.enable = true;
-    powerManagement.finegrained = true;
+    powerManagement.enable = false;
+    powerManagement.finegrained = false;
 
     prime = {
       offload = {
         enable = true;
         enableOffloadCmd = true;
       };
+
       intelBusId = "PCI:0:2:0";
       nvidiaBusId = "PCI:1:0:0";
     };
@@ -148,19 +151,93 @@ in
           sync.enable = lib.mkForce true;
         };
       };
+
+    };
+    open-driver-test.configuration = {
+      system.nixos.tags = [ "open-driver-test" ];
+      
+      hardware.nvidia = {
+        # Примусово вмикаємо відкриті модулі ядра
+        open = lib.mkForce true; 
+        
+        # Примусово вмикаємо глибоке енергозбереження (D3cold)
+        powerManagement.enable = lib.mkForce true;
+        powerManagement.finegrained = lib.mkForce true;
+      };
     };
   };
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
+  # gnome soft
+  services.gnome.gnome-software.enable = true;
+
   environment.systemPackages = with pkgs; [
   #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
   #  wget
      unstable.vscode
+     rar
      vesktop
      nodejs_24
      brave
      git
+     gdm-settings
+     gnome-randr
+     xorg.xrandr
+     libnotify
+     
+     (bottles.override { removeWarningPopup = true; })
+     (writeShellScriptBin "toggle-hz" ''
+       #!/usr/bin/env bash
+
+       # --- НАЛАШТУВАННЯ ---
+       DISPLAY_NAME="eDP-1"
+       
+       WAYLAND_LOW_MODE="2560x1600@60.000"
+       WAYLAND_HIGH_MODE="2560x1600@165.002"
+       
+       X11_RES="2560x1600"
+       X11_LOW_HZ="60"
+       X11_HIGH_HZ="165"
+       # --------------------
+
+       if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
+         # Виправлено: тепер шукаємо частоту за зірочкою (*), як вона реально виводиться
+         CURRENT=$(gnome-randr | grep "\*" | grep -oP '\d+(?=\.\d+\*)' | head -n 1)
+         
+         # Запобіжник: якщо не вдалося зчитати частоту
+         if [[ -z "$CURRENT" ]]; then
+           notify-send -a "Дисплей" -u critical "Помилка" "Не вдалося визначити поточну герцовку"
+           exit 1
+         fi
+
+         if [[ "$CURRENT" -le 65 ]]; then
+           gnome-randr modify "$DISPLAY_NAME" --mode "$WAYLAND_HIGH_MODE"
+           notify-send -a "Дисплей" -t 2000 "🔄 Герцовка змінена" "Встановлено 165 Hz (Wayland)"
+         else
+           gnome-randr modify "$DISPLAY_NAME" --mode "$WAYLAND_LOW_MODE"
+           notify-send -a "Дисплей" -t 2000 "🔄 Герцовка змінена" "Встановлено 60 Hz (Wayland)"
+         fi
+
+       else
+         # Логіка для X11
+         CURRENT=$(xrandr | grep "\*" | grep -oP '\d+(?=\.\d+\*)' | head -n 1)
+         
+         if [[ -z "$CURRENT" ]]; then
+           notify-send -a "Дисплей" -u critical "Помилка" "Не вдалося визначити поточну герцовку"
+           exit 1
+         fi
+
+         if [[ "$CURRENT" -le 65 ]]; then
+           xrandr --output "$DISPLAY_NAME" --mode "$X11_RES" --rate "$X11_HIGH_HZ"
+           notify-send -a "Дисплей" -t 2000 "🔄 Герцовка змінена" "Встановлено 165 Hz (X11)"
+         else
+           xrandr --output "$DISPLAY_NAME" --mode "$X11_RES" --rate "$X11_LOW_HZ"
+           notify-send -a "Дисплей" -t 2000 "🔄 Герцовка змінена" "Встановлено 60 Hz (X11)"
+         fi
+       fi
+     '')
+     
     
 
   ];
