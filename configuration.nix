@@ -185,6 +185,7 @@ in
      gnome-randr
      xorg.xrandr
      libnotify
+     steam
      
      (bottles.override { removeWarningPopup = true; })
      (writeShellScriptBin "toggle-hz" ''
@@ -241,6 +242,16 @@ in
     
 
   ];
+
+
+
+  swapDevices = [ {
+    device = "/var/lib/swapfile";
+    size = 16 * 1024; # Вкажіть розмір у мегабайтах (наприклад, 16 ГБ = 16 * 1024)
+  } ];
+
+  boot.initrd.systemd.enable = true;
+  powerManagement.enable = true;
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.

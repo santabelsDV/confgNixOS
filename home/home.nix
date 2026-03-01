@@ -11,6 +11,7 @@
     pkgs.gnomeExtensions.hide-top-bar
     pkgs.gnomeExtensions.caffeine
     pkgs.gnome-shell-extensions
+    pkgs.gnomeExtensions.hibernate-status-button
     pkgs.gnome-tweaks
   ];
 
@@ -21,6 +22,7 @@
         "blur-my-shell@aunetx"
         "hidetopbar@mathieu.bidon.ca"
         "caffeine@patapon.info"
+        "hibernate-status@dromi"
       ];
     };
   };
