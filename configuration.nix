@@ -253,9 +253,15 @@ in
   boot.initrd.systemd.enable = true;
   powerManagement.enable = true;
 
+
+  #Автоподшрузка в память (Не актуально)
+  #services.preload.enable = true;
+  
+
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;
+  
    
   # programs.gnupg.agent = {
   #   enable = true;

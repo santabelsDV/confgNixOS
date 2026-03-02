@@ -5,6 +5,10 @@
   home.homeDirectory = "/home/sasha";
   home.stateVersion = "25.11";
 
+  
+
+ 
+
   home.packages = [
     pkgs.zip
     pkgs.gnomeExtensions.blur-my-shell
@@ -13,7 +17,10 @@
     pkgs.gnome-shell-extensions
     pkgs.gnomeExtensions.hibernate-status-button
     pkgs.gnome-tweaks
+    pkgs.onedrive
+    pkgs.onedrivegui
   ];
+  
 
   dconf.settings = {
     "org/gnome/shell" = {
