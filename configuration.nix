@@ -137,21 +137,24 @@ in
 
   # 3. Виправлена спеціалізація
   specialisation = {
-    gaming.configuration = {
+   gaming.configuration = {
       system.nixos.tags = [ "gaming" ];
       
       hardware.nvidia = {
-        # В режимі Sync енергозбереження має бути вимкнене
         powerManagement.enable = lib.mkForce false;
         powerManagement.finegrained = lib.mkForce false;
         
         prime = {
+          # ПОВНЕ вимкнення Offload для ігрового режиму
           offload.enable = lib.mkForce false;
           offload.enableOffloadCmd = lib.mkForce false;
+          # Примусовий Sync (всі вікна малює NVIDIA)
           sync.enable = lib.mkForce true;
         };
       };
-
+      
+      # Додамо glxinfo для перевірки саме в цей режим (або в загальний)
+      environment.systemPackages = [ pkgs.mesa-demos pkgs.pciutils ];
     };
     open-driver-test.configuration = {
       system.nixos.tags = [ "open-driver-test" ];
@@ -176,7 +179,18 @@ in
   #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
   #  wget
      unstable.vscode
-     rar
+
+     unstable.rar
+     unstable.unrar
+     unstable.peazip
+     gau
+     sqlmap 
+     wget
+     mesa-demos
+     pciutils
+     nvtopPackages.full
+     
+
      vesktop
      nodejs_24
      brave
@@ -186,6 +200,11 @@ in
      xorg.xrandr
      libnotify
      steam
+
+
+     vulkan-loader
+     vulkan-validation-layers
+     vulkan-tools
      
      (bottles.override { removeWarningPopup = true; })
      (writeShellScriptBin "toggle-hz" ''
@@ -252,6 +271,33 @@ in
 
   boot.initrd.systemd.enable = true;
   powerManagement.enable = true;
+
+
+  environment.etc."xdg/mimeapps.list".text = ''
+  [Default Applications]
+  text/html=firefox.desktop
+  x-scheme-handler/about=firefox.desktop
+  x-scheme-handler/http=firefox.desktop
+  x-scheme-handler/https=firefox.desktop
+'';
+
+
+environment.sessionVariables = {
+    BROWSER = "firefox";
+  };
+
+  # 2. Виключаємо Epiphany (вбудований браузер GNOME), щоб він не перехоплював пошук
+  environment.gnome.excludePackages = with pkgs; [
+    epiphany
+  ];
+
+
+
+
+
+
+  
+
 
 
   #Автоподшрузка в память (Не актуально)

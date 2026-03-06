@@ -19,6 +19,26 @@
     pkgs.gnome-tweaks
     pkgs.onedrive
     pkgs.onedrivegui
+
+    #Трей 
+    pkgs.gnomeExtensions.appindicator
+
+    # Додано пакет розширення Clipboard Indicator (Буфер обміну)
+    pkgs.gnomeExtensions.clipboard-indicator
+
+    # Годиник робочий стіл
+    pkgs.gnomeExtensions.desktop-clock
+
+    # Додано пакет розширення Vitals та утиліти для зчитування сенсорів
+    pkgs.gnomeExtensions.vitals
+    pkgs.libgtop
+    pkgs.lm_sensors
+    pkgs.sysstat
+
+
+    pkgs.gnomeExtensions.forge
+
+
   ];
   
 
@@ -30,6 +50,10 @@
         "hidetopbar@mathieu.bidon.ca"
         "caffeine@patapon.info"
         "hibernate-status@dromi"
+        "appindicatorsupport@rgcjonas.gmail.com"
+        "clipboard-indicator@tudmotu.com"
+        "desktop-clock@rmy.pobox.com"
+        "forge@jmmaranan.com"
       ];
     };
   };
