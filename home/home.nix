@@ -40,6 +40,12 @@
 
 
   ];
+
+ dconf.settings = {
+  "org/gnome/desktop/input-sources" = {
+    xkb-options = [ "grp:alt_shift_toggle" ];
+  };
+};
   
 
   dconf.settings = {
@@ -56,6 +62,9 @@
         "forge@jmmaranan.com"
       ];
     };
+    
+
+    
   };
 
   programs.home-manager.enable = true;
