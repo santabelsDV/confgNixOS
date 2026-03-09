@@ -175,6 +175,9 @@ in
   # gnome soft
   services.gnome.gnome-software.enable = true;
 
+
+ 
+
   environment.systemPackages = with pkgs; [
   #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
   #  wget
@@ -186,7 +189,22 @@ in
      gau
      sqlmap 
      wget
+     rclone
+     fuse
+     rclone-browser
+
+     
+
      mesa-demos
+     (pkgs.writeShellScriptBin "nvidia-offload" ''
+      export __NV_PRIME_RENDER_OFFLOAD=1
+      export __NV_PRIME_RENDER_OFFLOAD_PROVIDER=NVIDIA-G0
+      export __GLX_VENDOR_LIBRARY_NAME=nvidia
+      export __VK_LAYER_NV_optimus=NVIDIA_only
+      exec "$@"
+    '')
+
+
      pciutils
      nvtopPackages.full
      
@@ -294,6 +312,30 @@ environment.sessionVariables = {
 
 
 
+  systemd.services.rclone-onedrive = {
+    description = "Rclone OneDrive Mount";
+    after = [ "network-online.target" ];
+    wants = [ "network-online.target" ];
+
+    serviceConfig = {
+      Type = "simple";
+      ExecStart = "${pkgs.rclone}/bin/rclone mount onedrive: /home/sasha/OneDrive \
+        --vfs-cache-mode full \
+        --vfs-cache-max-size 5G \
+        --vfs-cache-poll-interval 5m \
+        --allow-other";
+      Restart = "always";
+      RestartSec = 10;
+      User = "sasha";    # зміни на свого користувача
+      Group = "users";   # зміни на свою групу
+    };
+
+    wantedBy = [ "multi-user.target" ];
+  };
+
+
+
+
 
 
   
@@ -324,6 +366,14 @@ environment.sessionVariables = {
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
+
+  networking.firewall = {
+  enable = true;
+  # Дозволяємо вхідні з'єднання на 80 порт
+  allowedTCPPorts = [ 80 ];
+  # АБО просто довіряємо всьому трафіку з віртуалок (найзручніше для лаб)
+  trustedInterfaces = [ "virbr0" ];
+};
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
