@@ -16,6 +16,7 @@ in
       ./hardware-configuration.nix
       ./apps/default.nix
       ./dev/default.nix
+      ./zen.nix
     ];
 
     
@@ -206,9 +207,8 @@ in
 
 
      pciutils
-     nvtopPackages.full
+     nvtopPackages.full     
      
-
      vesktop
      nodejs_24
      brave
