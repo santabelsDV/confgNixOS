@@ -40,7 +40,7 @@ in
   time.timeZone = "Europe/Kyiv";
 
   # Select internationalisation properties.
-  i18n.defaultLocale = "ru_UA.UTF-8";
+  i18n.defaultLocale = "uk_UA.UTF-8";
 
   i18n.extraLocaleSettings = {
     LC_ADDRESS = "uk_UA.UTF-8";
@@ -115,6 +115,7 @@ in
 
   # Вмикаємо підтримку графічного прискорення (OpenGL/Vulkan)
   hardware.graphics.enable = true;
+  hardware.graphics.enable32Bit = true;
   
   hardware.nvidia = {
     modesetting.enable = true;
@@ -218,10 +219,6 @@ in
      gnome-randr
      xorg.xrandr
      libnotify
-     steam
-
-
-
 
      vulkan-loader
      vulkan-validation-layers
