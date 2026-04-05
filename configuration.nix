@@ -183,6 +183,7 @@ in
   #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
   #  wget
      unstable.vscode
+     antigravity.fhs
 
      unstable.rar
      unstable.unrar
@@ -220,9 +221,15 @@ in
      steam
 
 
+
+
      vulkan-loader
      vulkan-validation-layers
      vulkan-tools
+
+     qpwgraph
+     helvum
+     pavucontrol
      
      (bottles.override { removeWarningPopup = true; })
      (writeShellScriptBin "toggle-hz" ''
@@ -312,26 +319,6 @@ environment.sessionVariables = {
 
 
 
-  systemd.services.rclone-onedrive = {
-    description = "Rclone OneDrive Mount";
-    after = [ "network-online.target" ];
-    wants = [ "network-online.target" ];
-
-    serviceConfig = {
-      Type = "simple";
-      ExecStart = "${pkgs.rclone}/bin/rclone mount onedrive: /home/sasha/OneDrive \
-        --vfs-cache-mode full \
-        --vfs-cache-max-size 5G \
-        --vfs-cache-poll-interval 5m \
-        --allow-other";
-      Restart = "always";
-      RestartSec = 10;
-      User = "sasha";    # зміни на свого користувача
-      Group = "users";   # зміни на свою групу
-    };
-
-    wantedBy = [ "multi-user.target" ];
-  };
 
 
 
