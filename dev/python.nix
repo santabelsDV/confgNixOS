@@ -5,6 +5,9 @@
     numpy
     scapy
 
+    go
+    gopls
+
   ]))
 ];
 }
