@@ -16,7 +16,7 @@ in
       ./hardware-configuration.nix
       ./apps/default.nix
       ./dev/default.nix
-      ./zen.nix
+     # ./zen.nix
     ];
 
     
@@ -195,6 +195,8 @@ in
      rclone
      fuse
      rclone-browser
+    
+    
 
      
 
@@ -224,9 +226,31 @@ in
      vulkan-validation-layers
      vulkan-tools
 
+     obsidian
+
      qpwgraph
      helvum
+     
      pavucontrol
+
+     #Dev C++ 
+      clang-tools # Added to provide a Nix-aware clangd
+      gcc
+      cmake
+      gnumake
+      openssl
+      openssl.dev
+      nlohmann_json
+      pkg-config
+      # WINE for exe file 
+      bottles
+
+
+
+
+
+
+
      
      (bottles.override { removeWarningPopup = true; })
      (writeShellScriptBin "toggle-hz" ''
