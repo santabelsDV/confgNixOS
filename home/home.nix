@@ -38,6 +38,8 @@
 
     pkgs.gnomeExtensions.forge
 
+    pkgs.gnomeExtensions.random-wallpaper
+
 
   ];
 
@@ -56,6 +58,7 @@
         "clipboard-indicator@tudmotu.com"
         "desktop-clock@rmy.pobox.com"
         "forge@jmmaranan.com"
+        "randomwallpaper@iflow.space"
       ];
     };
   };

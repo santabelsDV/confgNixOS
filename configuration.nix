@@ -119,12 +119,12 @@ in
   
   hardware.nvidia = {
     modesetting.enable = true;
-    open = false;
+    open = true;
     nvidiaSettings = true;
     package = config.boot.kernelPackages.nvidiaPackages.stable;
 
-    powerManagement.enable = false;
-    powerManagement.finegrained = false;
+    powerManagement.enable = true;
+    powerManagement.finegrained = true;
 
     prime = {
       offload = {
@@ -194,7 +194,8 @@ in
      wget
      rclone
      fuse
-     rclone-browser
+     zoom-us
+     
     
     
 
@@ -215,7 +216,14 @@ in
      
      vesktop
      nodejs_24
-     brave
+     (brave.override {
+    commandLineArgs = [
+      "--ozone-platform-hint=auto"
+      "--enable-features=WaylandWindowDecorations"
+      "--enable-wayland-ime"
+    ];
+  })
+
      git
      gdm-settings
      gnome-randr
@@ -244,6 +252,9 @@ in
       pkg-config
       # WINE for exe file 
       bottles
+
+      xclip
+      wl-clipboard
 
 
 
@@ -326,10 +337,21 @@ in
   x-scheme-handler/http=firefox.desktop
   x-scheme-handler/https=firefox.desktop
 '';
+xdg.portal = {
+  enable = true;
+  #wlr.enable = true; # якщо у вас Sway/Hyprland
+  extraPortals = [ 
+    pkgs.xdg-desktop-portal-gtk
+    # pkgs.xdg-desktop-portal-kde # розкоментуйте, якщо у вас KDE Plasma
+  ];
+  config.common.default = "*";
+};
 
+fonts.fontconfig.enable = true;
 
 environment.sessionVariables = {
     BROWSER = "firefox";
+    SAL_USE_VCLPLUGIN = "gtk3";
   };
 
   # 2. Виключаємо Epiphany (вбудований браузер GNOME), щоб він не перехоплював пошук
