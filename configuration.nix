@@ -104,6 +104,19 @@ in
     ];
   };
 
+  programs.dconf.enable = true;
+  boot.supportedFilesystems = [ "ntfs" "vfat" "fuse" ];
+
+
+
+
+
+
+
+
+
+
+
   # Install firefox.
   programs.firefox.enable = true;
 
@@ -111,7 +124,12 @@ in
   services.xserver.videoDrivers = [ "nvidia" ];
 
   # Дозволяємо встановлення пропрієтарних програм (необхідно для NVIDIA, Discord, Steam тощо)
-  nixpkgs.config.allowUnfree = true;
+  nixpkgs.config = {
+    allowUnfree = true;
+    android_sdk.accept_license = true;
+  };
+
+
 
   # Вмикаємо підтримку графічного прискорення (OpenGL/Vulkan)
   hardware.graphics.enable = true;
@@ -124,17 +142,16 @@ in
     package = config.boot.kernelPackages.nvidiaPackages.stable;
 
     powerManagement.enable = true;
-    powerManagement.finegrained = true;
+    powerManagement.finegrained = false;
 
-    prime = {
-      offload = {
-        enable = true;
-        enableOffloadCmd = true;
-      };
+    #prime = {
+    #  offload = {
+    #    enable = true;
+    #    enableOffloadCmd = true;
+    #  };
 
-      intelBusId = "PCI:0:2:0";
-      nvidiaBusId = "PCI:1:0:0";
-    };
+     # nvidiaBusId = "PCI:1:0:0";
+    #};
   };
 
   # 3. Виправлена спеціалізація
@@ -146,13 +163,13 @@ in
         powerManagement.enable = lib.mkForce false;
         powerManagement.finegrained = lib.mkForce false;
         
-        prime = {
+        #prime = {
           # ПОВНЕ вимкнення Offload для ігрового режиму
-          offload.enable = lib.mkForce false;
-          offload.enableOffloadCmd = lib.mkForce false;
+        #  offload.enable = lib.mkForce false;
+        #  offload.enableOffloadCmd = lib.mkForce false;
           # Примусовий Sync (всі вікна малює NVIDIA)
-          sync.enable = lib.mkForce true;
-        };
+        #  sync.enable = lib.mkForce true;
+       # };
       };
       
       # Додамо glxinfo для перевірки саме в цей режим (або в загальний)
@@ -167,7 +184,7 @@ in
         
         # Примусово вмикаємо глибоке енергозбереження (D3cold)
         powerManagement.enable = lib.mkForce true;
-        powerManagement.finegrained = lib.mkForce true;
+        powerManagement.finegrained = lib.mkForce false;
       };
     };
   };
@@ -195,6 +212,9 @@ in
      rclone
      fuse
      zoom-us
+
+
+     proverif
      
     
     
@@ -216,13 +236,16 @@ in
      
      vesktop
      nodejs_24
-     (brave.override {
-    commandLineArgs = [
-      "--ozone-platform-hint=auto"
-      "--enable-features=WaylandWindowDecorations"
-      "--enable-wayland-ime"
-    ];
-  })
+    (brave.override {
+       commandLineArgs = [
+         "--ozone-platform=wayland"
+         "--enable-features=WaylandWindowDecorations"
+         "--enable-wayland-ime"
+         # Додаємо EGL для кращої сумісності з NVIDIA на Wayland
+         "--use-gl=egl" 
+         # Видалено --disable-gpu-sandbox, щоб уникнути конфліктів із пам'яттю
+       ];
+     })
 
      git
      gdm-settings
@@ -238,6 +261,11 @@ in
 
      qpwgraph
      helvum
+
+
+     glib-networking
+     gnome-online-accounts
+     gvfs
      
      pavucontrol
 
@@ -255,6 +283,9 @@ in
 
       xclip
       wl-clipboard
+
+      bluez         # Надає libbluetooth
+      systemd 
 
 
 
@@ -347,12 +378,17 @@ xdg.portal = {
   config.common.default = "*";
 };
 
+services.gvfs.enable = true;
+services.gnome.gnome-online-accounts.enable = true;
+
 fonts.fontconfig.enable = true;
 
 environment.sessionVariables = {
     BROWSER = "firefox";
     SAL_USE_VCLPLUGIN = "gtk3";
-  };
+    NIXOS_OZONE_WL = "1"; # Обов'язково для Wayland
+    GDK_BACKEND = "wayland"; # Примусово змушує GTK3 (і LibreOffice) використовувати Wayland
+};
 
   # 2. Виключаємо Epiphany (вбудований браузер GNOME), щоб він не перехоплював пошук
   environment.gnome.excludePackages = with pkgs; [

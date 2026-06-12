@@ -4,7 +4,6 @@
     requests
     numpy
     scapy
-
     go
     gopls
 
