@@ -1,9 +1,10 @@
 { pkgs, ... }:
 {
     virtualisation.docker.enable = true;
+    
 
     
-    users.users.sasha = {
+    users.users.sasha = { 
     isNormalUser = true;
     extraGroups = [ "wheel" "docker" ]; # Додаємо docker сюди
   };
