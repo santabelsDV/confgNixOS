@@ -1,0 +1,34 @@
+# Python virtual environment
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Logs
+log.txt
+*.log
+
+# Nix build artifacts
+result
+result-*
+.direnv/
+
+# Editor / IDE
+.vscode/
+*.swp
+*.swo
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets
+secrets.nix
+secrets/
+*.secret
+*.env
+.env*
+
+# rclone токени
+rclone.conf
