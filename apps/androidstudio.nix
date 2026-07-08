@@ -12,11 +12,12 @@
   # Це необхідно для коректної роботи завантажених SDK інструментів
   environment.systemPackages = with pkgs; [
     androidStudioPackages.stable # Сучасний стандартний пакет (вже має FHS-обгортку)
+    android-tools
   ];
 
   # 3. Вмикаємо ADB (Android Debug Bridge) на рівні системи.
   # Це АБСОЛЮТНО НЕОБХІДНО для розпізнавання реального телефону по USB (налаштовує udev rules).
-  programs.adb.enable = true;
+  #programs.adb.enable = true;
 
   # 4. Додаємо користувача до групи adbusers
   # 4. Додаємо користувача до групи adbusers

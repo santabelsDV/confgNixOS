@@ -1,5 +1,9 @@
 { config, pkgs, lib, ... }:
 {
+
+  programs.steam = {
+  enable = true;
+};
   environment.systemPackages = with pkgs; [
     (texlive.withPackages (ps: with ps; [
       ps.scheme-medium

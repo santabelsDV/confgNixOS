@@ -93,9 +93,11 @@ in
 
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
+  programs.fish.enable = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.sasha = {
+    shell = pkgs.fish;
     isNormalUser = true;
     description = "Sasha";
     extraGroups = [ "networkmanager" "wheel" ];
@@ -215,6 +217,10 @@ in
 
 
      proverif
+
+
+
+     superfile
      
     
     
@@ -260,15 +266,17 @@ in
      obsidian
 
      qpwgraph
-     helvum
+     # helvum
+     crosspipe
 
 
      glib-networking
+     glib
      gnome-online-accounts
      gvfs
      
      pavucontrol
-
+     playerctl
      #Dev C++ 
       clang-tools # Added to provide a Nix-aware clangd
       gcc
@@ -383,6 +391,31 @@ services.gnome.gnome-online-accounts.enable = true;
 
 fonts.fontconfig.enable = true;
 
+
+
+# Автоматичне монтування Google Drive через rclone
+# Автоматичне монтування Google Drive через rclone
+  systemd.user.services.rclone-gdrive = {
+    description = "rclone: Mount Google Drive";
+    wantedBy = [ "default.target" ];
+    after = [ "network-online.target" ];
+    
+    serviceConfig = {
+      Type = "simple";
+      # Вказуємо systemd, де шукати fusermount3 та базові утиліти
+      Environment = "PATH=/run/wrappers/bin:${pkgs.coreutils}/bin";
+      
+      ExecStartPre = "${pkgs.coreutils}/bin/mkdir -p %h/GoogleDrive";
+      ExecStart = "${pkgs.rclone}/bin/rclone mount gdrive: %h/GoogleDrive --vfs-cache-mode full --dir-cache-time 72h --vfs-read-chunk-size 128M --vfs-read-chunk-size-limit 1G";
+      ExecStop = "/run/wrappers/bin/fusermount3 -u %h/GoogleDrive";
+      
+      Restart = "on-failure";
+      RestartSec = "10s";
+    };
+  };
+
+
+
 environment.sessionVariables = {
     BROWSER = "firefox";
     SAL_USE_VCLPLUGIN = "gtk3";
@@ -395,18 +428,10 @@ environment.sessionVariables = {
     epiphany
   ];
 
-
-
-
-
-
-
-
-
-
   
 
-
+ 
+# Відкриваємо порти у фаєрволі (Home Assistant за замовчуванням використовує 8123)
 
   #Автоподшрузка в память (Не актуально)
   #services.preload.enable = true;
@@ -433,13 +458,19 @@ environment.sessionVariables = {
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
 
+
+  
+
+
   networking.firewall = {
   enable = true;
   # Дозволяємо вхідні з'єднання на 80 порт
-  allowedTCPPorts = [ 80 ];
+  allowedTCPPorts = [ 80 8123  8080 3000 8081]; # Усі TCP порти тут
+  allowedUDPPorts = [ 5353 ];    # Усі UDP порти тут
   # АБО просто довіряємо всьому трафіку з віртуалок (найзручніше для лаб)
   trustedInterfaces = [ "virbr0" ];
 };
+
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

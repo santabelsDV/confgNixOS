@@ -27,7 +27,7 @@ pkgs.mkShell {
     pip install --quiet "litellm[proxy]"
 
     # 4. Ваш API-ключ Gemini
-    export GEMINI_API_KEY="AQ.Ab8RN6JgMkM62bsU0qhCfYSJYD4MPBTGs6pX-L0FVl-vK6IDRg"
+    export GEMINI_API_KEY=""
 
     # 5. Запуск
     echo "🚀 Запускаю локальний проксі на http://localhost:4000 ..."
