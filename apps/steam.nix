@@ -11,8 +11,5 @@
       ps.multirow              # ← додай цей рядок
     ]))
     biber
-    (python3.withPackages (ps: with ps; [
-      pygments
-    ]))
   ];
 }

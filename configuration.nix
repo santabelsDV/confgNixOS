@@ -16,7 +16,7 @@ in
       ./hardware-configuration.nix
       ./apps/default.nix
       ./dev/default.nix
-     # ./zen.nix
+   
     ];
 
     
@@ -83,12 +83,7 @@ in
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
-    # If you want to use JACK applications, uncomment this
-    #jack.enable = true;
-
-    # use the example session manager (no others are packaged yet so this is enabled by default,
-    # no need to redefine it in your config for now)
-    #media-session.enable = true;
+   
   };
 
   # Enable touchpad support (enabled default in most desktopManager).
@@ -108,15 +103,6 @@ in
 
   programs.dconf.enable = true;
   boot.supportedFilesystems = [ "ntfs" "vfat" "fuse" ];
-
-
-
-
-
-
-
-
-
 
 
   # Install firefox.
@@ -164,14 +150,7 @@ in
       hardware.nvidia = {
         powerManagement.enable = lib.mkForce false;
         powerManagement.finegrained = lib.mkForce false;
-        
-        #prime = {
-          # ПОВНЕ вимкнення Offload для ігрового режиму
-        #  offload.enable = lib.mkForce false;
-        #  offload.enableOffloadCmd = lib.mkForce false;
-          # Примусовий Sync (всі вікна малює NVIDIA)
-        #  sync.enable = lib.mkForce true;
-       # };
+       
       };
       
       # Додамо glxinfo для перевірки саме в цей режим (або в загальний)
@@ -207,20 +186,14 @@ in
 
      unstable.rar
      unstable.unrar
-     unstable.peazip
-     gau
-     sqlmap 
+     unstable.peazip  
      wget
      rclone
      fuse
      zoom-us
 
 
-     proverif
 
-
-
-     superfile
      
     
     
@@ -267,10 +240,9 @@ in
 
      qpwgraph
      # helvum
-     crosspipe
 
 
-     glib-networking
+    
      glib
      gnome-online-accounts
      gvfs
@@ -286,9 +258,7 @@ in
       openssl.dev
       nlohmann_json
       pkg-config
-      # WINE for exe file 
-      bottles
-
+     
       xclip
       wl-clipboard
 
@@ -357,6 +327,10 @@ in
     
 
   ];
+
+
+  services.thermald.enable = true;
+  services.fwupd.enable = true;
 
 
 

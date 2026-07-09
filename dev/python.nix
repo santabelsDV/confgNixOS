@@ -4,9 +4,7 @@
     requests
     numpy
     scapy
-    go
-    gopls
-
+    pygments
   ]))
 ];
 }
