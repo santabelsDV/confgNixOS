@@ -2,12 +2,8 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs,lib, ... }:
+{ config, pkgs, lib, ... }:
 
-let
-  # Імпортуємо нестабільний канал
-  unstable = import <nixos-unstable> { config = { allowUnfree = true; }; };
-in
 {
 
 
@@ -190,6 +186,10 @@ in
      wget
      rclone
      fuse
+
+     nixd
+     nixfmt-rfc-style
+     
      zoom-us
 
 
@@ -229,7 +229,7 @@ in
      git
      gdm-settings
      gnome-randr
-     xorg.xrandr
+     xrandr
      libnotify
 
      vulkan-loader
@@ -352,12 +352,15 @@ in
 '';
 xdg.portal = {
   enable = true;
-  #wlr.enable = true; # якщо у вас Sway/Hyprland
   extraPortals = [ 
     pkgs.xdg-desktop-portal-gtk
-    # pkgs.xdg-desktop-portal-kde # розкоментуйте, якщо у вас KDE Plasma
+    pkgs.xdg-desktop-portal-gnome  # Потрібен для screen sharing (ScreenCast portal)
   ];
-  config.common.default = "*";
+  config.niri = {
+    default = [ "gnome" "gtk" ];
+    "org.freedesktop.impl.portal.ScreenCast" = "gnome";
+    "org.freedesktop.impl.portal.Screenshot" = "gnome";
+  };
 };
 
 services.gvfs.enable = true;

@@ -1,7 +1,5 @@
 { pkgs, lib, ... }:
-let
-  unstable = import <nixos-unstable> { config = { allowUnfree = true; }; };
-in
+
 {
   environment.systemPackages = with pkgs; [
     libreoffice
@@ -13,9 +11,8 @@ in
     python3Packages.litellm
   ];
 
-  # ✅ fonts — окремий атрибут, не всередині systemPackages
   fonts.packages = with pkgs; [
     unstable.corefonts
-    unstable.liberation_ttf  # варто додати і сюди
+    unstable.liberation_ttf
   ];
 }
