@@ -157,6 +157,7 @@ window-rule {
   match title="Home Assistant"
   open-floating true
   focus-ring { off; }
+  background-effect { blur true; }
 }
 
 // Правило для віджета Масштабу дисплея
@@ -164,4 +165,5 @@ window-rule {
   match title="Display Scale"
   open-floating true
   focus-ring { off; }
+  background-effect { blur true; }
 }

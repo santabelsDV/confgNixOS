@@ -6,7 +6,7 @@ import Quickshell
 Window {
     id: root
     width: 400
-    height: 140
+    height: 260
     color: "transparent"
     visible: true
     title: "Display Scale"
@@ -41,7 +41,7 @@ Window {
     Rectangle {
         anchors.fill: parent
         radius: 20
-        color: themeColors.headerBg
+        color: Qt.alpha(themeColors.headerBg, 0.8) // Напівпрозорий фон (80% непрозорості)
         border.color: themeColors.accentBg
         border.width: 2
 
@@ -50,8 +50,9 @@ Window {
             anchors.margins: 25
             spacing: 20
 
+            // Секція масштабу
             Text {
-                text: "🔍 Масштаб дисплея (eDP-1)"
+                text: "🔍 Масштаб дисплея"
                 color: themeColors.windowFg
                 font.pixelSize: 18
                 font.bold: true
@@ -129,6 +130,71 @@ Window {
                         cursorShape: Qt.PointingHandCursor
                         onClicked: {
                             Quickshell.execDetached(["niri", "msg", "output", "eDP-1", "scale", "1.5"]);
+                            Qt.quit();
+                        }
+                    }
+                }
+            }
+
+            // Секція герцовки
+            Text {
+                text: "⚡ Частота оновлення"
+                color: themeColors.windowFg
+                font.pixelSize: 18
+                font.bold: true
+                Layout.alignment: Qt.AlignHCenter
+                Layout.topMargin: 5
+            }
+
+            RowLayout {
+                Layout.alignment: Qt.AlignHCenter
+                spacing: 15
+
+                Rectangle {
+                    width: 140
+                    height: 40
+                    radius: 12
+                    color: themeColors.accentBg
+                    
+                    Text {
+                        anchors.centerIn: parent
+                        text: "60 Hz (Економія)"
+                        color: themeColors.windowBg
+                        font.pixelSize: 15
+                        font.bold: true
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: {
+                            Quickshell.execDetached(["niri", "msg", "output", "eDP-1", "mode", "2560x1600@60.000"]);
+                            Quickshell.execDetached(["notify-send", "-a", "Дисплей", "-t", "2000", "🔄 Герцовка", "60 Hz"]);
+                            Qt.quit();
+                        }
+                    }
+                }
+
+                Rectangle {
+                    width: 140
+                    height: 40
+                    radius: 12
+                    color: themeColors.accentBg
+                    
+                    Text {
+                        anchors.centerIn: parent
+                        text: "165 Hz (Геймінг)"
+                        color: themeColors.windowBg
+                        font.pixelSize: 15
+                        font.bold: true
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: {
+                            Quickshell.execDetached(["niri", "msg", "output", "eDP-1", "mode", "2560x1600@165.002"]);
+                            Quickshell.execDetached(["notify-send", "-a", "Дисплей", "-t", "2000", "🔄 Герцовка", "165 Hz"]);
                             Qt.quit();
                         }
                     }

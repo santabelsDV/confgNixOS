@@ -40,7 +40,7 @@ Window {
     Rectangle {
         anchors.fill: parent
         radius: 20
-        color: themeColors.headerBg
+        color: Qt.alpha(themeColors.headerBg, 0.8) // Напівпрозорий фон (80% непрозорості)
         border.color: themeColors.accentBg
         border.width: 2
 
