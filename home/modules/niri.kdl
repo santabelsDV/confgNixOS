@@ -131,7 +131,10 @@ binds {
   Mod+Print { screenshot-window; }
 
   // Віджет масштабу
-  Mod+Shift+M { spawn "quickshell" "-p" "/home/sasha/config/home/modules/wiget/rsize.qml"; }
+  Mod+Shift+M { spawn "sh" "-c" "QML_XHR_ALLOW_FILE_READ=1 quickshell -p /home/sasha/config/home/modules/wiget/rsize.qml"; }
+
+  // Віджет керування Home Assistant (Увімкнути/Вимкнути)
+  Mod+A { spawn "sh" "-c" "QML_XHR_ALLOW_FILE_READ=1 quickshell -p /home/sasha/config/home/modules/wiget/hass.qml"; }
 
   // Медіа-клавіші
   XF86AudioRaiseVolume allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "5%+"; }
@@ -147,4 +150,18 @@ binds {
 
   // Перемикання герцовки (60 ↔ 165)
   Mod+F5 { spawn "toggle-hz-niri"; }
+}
+
+// Правило для віджета Home Assistant, щоб він був "плаваючим" (поверх усього)
+window-rule {
+  match title="Home Assistant"
+  open-floating true
+  focus-ring { off; }
+}
+
+// Правило для віджета Масштабу дисплея
+window-rule {
+  match title="Display Scale"
+  open-floating true
+  focus-ring { off; }
 }

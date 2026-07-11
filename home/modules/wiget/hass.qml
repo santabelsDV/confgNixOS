@@ -5,15 +5,14 @@ import Quickshell
 
 Window {
     id: root
-    width: 400
-    height: 140
+    width: 380
+    height: 240
     color: "transparent"
     visible: true
-    title: "Display Scale"
-    
+    title: "Home Assistant"
+
     flags: Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint
 
-    // Динамічно зчитуємо системну тему Noctalia
     property var themeColors: {
         var xhr = new XMLHttpRequest();
         xhr.open("GET", "file:///home/sasha/.config/gtk-3.0/noctalia.css", false);
@@ -51,7 +50,7 @@ Window {
             spacing: 20
 
             Text {
-                text: "🔍 Масштаб дисплея (eDP-1)"
+                text: "🏠 Сервіс Home Assistant"
                 color: themeColors.windowFg
                 font.pixelSize: 18
                 font.bold: true
@@ -60,18 +59,18 @@ Window {
 
             RowLayout {
                 Layout.alignment: Qt.AlignHCenter
-                spacing: 15
+                spacing: 20
 
                 Rectangle {
-                    width: 90
-                    height: 40
+                    width: 140
+                    height: 45
                     radius: 12
-                    color: themeColors.accentBg
+                    color: "#a6e3a1"
                     
                     Text {
                         anchors.centerIn: parent
-                        text: "100%"
-                        color: themeColors.windowBg
+                        text: "Увімкнути"
+                        color: "#11111b"
                         font.pixelSize: 15
                         font.bold: true
                     }
@@ -80,22 +79,23 @@ Window {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
                         onClicked: {
-                            Quickshell.execDetached(["niri", "msg", "output", "eDP-1", "scale", "1.0"]);
+                            Quickshell.execDetached(["sudo", "/run/current-system/sw/bin/systemctl", "start", "home-assistant.service"]);
+                            Quickshell.execDetached(["notify-send", "-t", "2000", "Home Assistant", "🟢 Сервіс УВІМКНЕНО"]);
                             Qt.quit();
                         }
                     }
                 }
 
                 Rectangle {
-                    width: 90
-                    height: 40
+                    width: 140
+                    height: 45
                     radius: 12
-                    color: themeColors.accentBg
+                    color: "#f38ba8"
                     
                     Text {
                         anchors.centerIn: parent
-                        text: "125%"
-                        color: themeColors.windowBg
+                        text: "Вимкнути"
+                        color: "#11111b"
                         font.pixelSize: 15
                         font.bold: true
                     }
@@ -104,39 +104,41 @@ Window {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
                         onClicked: {
-                            Quickshell.execDetached(["niri", "msg", "output", "eDP-1", "scale", "1.25"]);
-                            Qt.quit();
-                        }
-                    }
-                }
-
-                Rectangle {
-                    width: 90
-                    height: 40
-                    radius: 12
-                    color: themeColors.accentBg
-                    
-                    Text {
-                        anchors.centerIn: parent
-                        text: "150%"
-                        color: themeColors.windowBg
-                        font.pixelSize: 15
-                        font.bold: true
-                    }
-
-                    MouseArea {
-                        anchors.fill: parent
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked: {
-                            Quickshell.execDetached(["niri", "msg", "output", "eDP-1", "scale", "1.5"]);
+                            Quickshell.execDetached(["sudo", "/run/current-system/sw/bin/systemctl", "stop", "home-assistant.service"]);
+                            Quickshell.execDetached(["notify-send", "-t", "2000", "Home Assistant", "🔴 Сервіс ВИМКНЕНО"]);
                             Qt.quit();
                         }
                     }
                 }
             }
+
+            // Кнопка відкриття Web-інтерфейсу
+            Rectangle {
+                Layout.alignment: Qt.AlignHCenter
+                width: 300
+                height: 45
+                radius: 12
+                color: themeColors.accentBg
+                
+                Text {
+                    anchors.centerIn: parent
+                    text: "🌐 Відкрити Web-інтерфейс"
+                    color: themeColors.windowBg
+                    font.pixelSize: 15
+                    font.bold: true
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: {
+                        Quickshell.execDetached(["xdg-open", "http://localhost:8123"]);
+                        Qt.quit();
+                    }
+                }
+            }
         }
         
-        // Кнопка закриття
         Rectangle {
             width: 24
             height: 24
