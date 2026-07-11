@@ -13,6 +13,11 @@ Window {
     
     flags: Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint
 
+    Shortcut {
+        sequence: "Escape"
+        onActivated: Qt.quit()
+    }
+
     // Динамічно зчитуємо системну тему Noctalia
     property var themeColors: {
         var xhr = new XMLHttpRequest();

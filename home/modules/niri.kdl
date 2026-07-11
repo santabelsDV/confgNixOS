@@ -152,18 +152,22 @@ binds {
   Mod+F5 { spawn "toggle-hz-niri"; }
 }
 
-// Правило для віджета Home Assistant, щоб він був "плаваючим" (поверх усього)
+// Правило для віджета Home Assistant
 window-rule {
   match title="Home Assistant"
   open-floating true
-  focus-ring { off; }
+  draw-border-with-background false
+  focus-ring { width 0; }
+  border { width 0; }
   background-effect { blur true; }
 }
 
-// Правило для віджета Масштабу дисплея
+// Правило для віджета Масштабу
 window-rule {
   match title="Display Scale"
   open-floating true
-  focus-ring { off; }
+  draw-border-with-background false
+  focus-ring { width 0; }
+  border { width 0; }
   background-effect { blur true; }
 }

@@ -13,6 +13,11 @@ Window {
 
     flags: Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint
 
+    Shortcut {
+        sequence: "Escape"
+        onActivated: Qt.quit()
+    }
+
     property var themeColors: {
         var xhr = new XMLHttpRequest();
         xhr.open("GET", "file:///home/sasha/.config/gtk-3.0/noctalia.css", false);
