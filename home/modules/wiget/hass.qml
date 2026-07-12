@@ -6,7 +6,7 @@ import Quickshell
 Window {
     id: root
     width: 420
-    height: 280
+    height: 220
     color: "transparent"
     visible: true
     title: "Home Assistant"
@@ -24,7 +24,7 @@ Window {
         try {
             xhr.send();
             var css = xhr.responseText;
-            var c = { windowBg: "#11111b", windowFg: "#cdd6f4", accentBg: "#38b259", headerBg: "#181825" };
+            var c = { windowBg: "#11111b", windowFg: "#cdd6f4", accentBg: "#ff0000ff", headerBg: "#181825" };
             if (css) {
                 var m;
                 m = css.match(/@define-color window_bg_color\s+(#[0-9a-fA-F]+);/);
@@ -122,7 +122,7 @@ Window {
                     focus: true // Ця кнопка у фокусі за замовчуванням
                     
                     KeyNavigation.right: btnOff
-                    KeyNavigation.down: btnToggle
+                    KeyNavigation.down: btnWeb
                     KeyNavigation.up: btnClose
 
                     color: activeFocus || mouseOn.containsMouse ? Qt.alpha(themeColors.accentBg, 0.25) : Qt.alpha(themeColors.accentBg, 0.15)
@@ -159,7 +159,7 @@ Window {
                     activeFocusOnTab: true
                     
                     KeyNavigation.left: btnOn
-                    KeyNavigation.down: btnToggle
+                    KeyNavigation.down: btnWeb
                     KeyNavigation.up: btnClose
 
                     color: activeFocus || mouseOff.containsMouse ? Qt.alpha("#f38ba8", 0.25) : Qt.alpha("#f38ba8", 0.15)
@@ -189,44 +189,6 @@ Window {
                 }
             }
 
-            // Кнопка Перемикання світла
-            Rectangle {
-                id: btnToggle
-                Layout.alignment: Qt.AlignHCenter
-                width: 336
-                height: 40
-                radius: 8
-                activeFocusOnTab: true
-                
-                KeyNavigation.up: btnOn
-                KeyNavigation.down: btnWeb
-                
-                color: activeFocus || mouseToggle.containsMouse ? Qt.alpha("#f9e2af", 0.3) : Qt.alpha("#f9e2af", 0.15)
-                border.color: activeFocus ? "#f9e2af" : Qt.alpha("#f9e2af", 0.5)
-                border.width: activeFocus ? 2 : 1
-                
-                Text {
-                    anchors.centerIn: parent
-                    text: "💡 Перемкнути світло всюди"
-                    color: "#f9e2af"
-                    font.pixelSize: 14
-                    font.bold: true
-                }
-                MouseArea {
-                    id: mouseToggle
-                    anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
-                    hoverEnabled: true
-                    onClicked: root.actionToggleLights()
-                }
-                Keys.onPressed: (event) => {
-                    if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter || event.key === Qt.Key_Space) {
-                        root.actionToggleLights()
-                        event.accepted = true
-                    }
-                }
-            }
-
             // Web UI
             Rectangle {
                 id: btnWeb
@@ -236,7 +198,7 @@ Window {
                 radius: 8
                 activeFocusOnTab: true
                 
-                KeyNavigation.up: btnToggle
+                KeyNavigation.up: btnOn
                 
                 color: activeFocus || mouseWeb.containsMouse ? Qt.darker(themeColors.accentBg, 1.1) : themeColors.accentBg
                 border.color: themeColors.windowFg
@@ -276,12 +238,7 @@ Window {
         Quickshell.execDetached(["notify-send", "-t", "2000", "Home Assistant", "🔴 Сервіс ВИМКНЕНО"]);
         Qt.quit();
     }
-    function actionToggleLights() {
-        Quickshell.execDetached(["/home/sasha/.local/bin/toggle-all-lights"]);
-        Qt.quit();
-    }
     function actionWeb() {
         Quickshell.execDetached(["xdg-open", "http://localhost:8123"]);
         Qt.quit();
     }
-}
