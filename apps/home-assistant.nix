@@ -13,6 +13,7 @@ let
     };
     postPatch = ''
       sed -i 's/self._attr_color_mode = ColorMode.COLOR_TEMP/self._attr_color_mode = list(self._attr_supported_color_modes)[0] if self._attr_supported_color_modes else ColorMode.ONOFF/g' custom_components/hass_cozylife_local_pull/light.py
+      sed -i 's/time.sleep(3)/for _ in range(150):\n        if all(item.device_type_code != str for item in hass.data[DOMAIN]["tcp_client"]):\n            break\n        time.sleep(0.1)/g' custom_components/hass_cozylife_local_pull/__init__.py
     '';
   };
 in
@@ -22,7 +23,6 @@ in
     extraComponents = [
       "esphome"
       "met"
-      "radio_browser"
     ];
     customComponents = [ cozylife ];
     config = {
@@ -38,8 +38,9 @@ in
       # Налаштування CozyLife
       hass_cozylife_local_pull = {
         lang = "en";
-        # Сюди можна вписати IP-адреси, але ми вимкнули їх для автоматичного пошуку
-        # ip = [ "192.168.31.182" ];
+        # Автоматичний пошук часто не працює через віртуальні інтерфейси Linux, 
+        # тому надійніше використовувати Static IP у роутері:
+        ip = [ "192.168.31.182" ];
       };
     };
   };
