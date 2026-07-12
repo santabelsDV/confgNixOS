@@ -23,6 +23,9 @@ in
     extraComponents = [
       "esphome"
       "met"
+      "google_translate"
+      "upnp"
+      "radio_browser"
     ];
     customComponents = [ cozylife ];
     config = {
