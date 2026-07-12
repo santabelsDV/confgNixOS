@@ -5,8 +5,8 @@ import Quickshell
 
 Window {
     id: root
-    width: 380
-    height: 240
+    width: 420
+    height: 280
     color: "transparent"
     visible: true
     title: "Home Assistant"
@@ -44,128 +44,244 @@ Window {
 
     Rectangle {
         anchors.fill: parent
-        radius: 20
-        color: Qt.alpha(themeColors.headerBg, 0.8) // Напівпрозорий фон (80% непрозорості)
-        border.color: themeColors.accentBg
-        border.width: 2
+        radius: 12 // Менший радіус як у буфера обміну
+        color: Qt.alpha(themeColors.headerBg, 0.85)
+        border.color: Qt.alpha(themeColors.windowFg, 0.1) // Тонка ледь помітна рамка
+        border.width: 1
 
         ColumnLayout {
             anchors.fill: parent
-            anchors.margins: 25
-            spacing: 20
+            anchors.margins: 16
+            spacing: 16
 
-            Text {
-                text: "🏠 Сервіс Home Assistant"
-                color: themeColors.windowFg
-                font.pixelSize: 18
-                font.bold: true
-                Layout.alignment: Qt.AlignHCenter
+            // Верхня панель (Header)
+            RowLayout {
+                Layout.fillWidth: true
+                
+                Text {
+                    text: "Home Assistant"
+                    color: themeColors.windowFg
+                    font.pixelSize: 16
+                    font.bold: true
+                    Layout.fillWidth: true
+                }
+                
+                // Кнопка закриття як у буфері
+                Rectangle {
+                    id: btnClose
+                    width: 28
+                    height: 28
+                    radius: 8
+                    activeFocusOnTab: true
+                    KeyNavigation.down: btnOn
+
+                    color: activeFocus || mouseClose.containsMouse ? Qt.alpha(themeColors.windowFg, 0.15) : Qt.alpha(themeColors.windowFg, 0.05)
+                    border.color: activeFocus ? themeColors.windowFg : "transparent"
+                    border.width: activeFocus ? 1 : 0
+                    
+                    Text {
+                        anchors.centerIn: parent
+                        text: "✕"
+                        color: themeColors.windowFg
+                        font.pixelSize: 14
+                    }
+                    MouseArea {
+                        id: mouseClose
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        hoverEnabled: true
+                        onClicked: Qt.quit()
+                    }
+                    Keys.onPressed: (event) => {
+                        if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter || event.key === Qt.Key_Space) {
+                            Qt.quit()
+                            event.accepted = true
+                        }
+                    }
+                }
             }
 
+            // Лінія-роздільник
+            Rectangle {
+                Layout.fillWidth: true
+                height: 1
+                color: Qt.alpha(themeColors.windowFg, 0.1)
+            }
+
+            // Кнопки Увімкнути / Вимкнути
             RowLayout {
                 Layout.alignment: Qt.AlignHCenter
-                spacing: 20
+                spacing: 16
 
                 Rectangle {
-                    width: 140
-                    height: 45
-                    radius: 12
-                    color: "#a6e3a1"
+                    id: btnOn
+                    width: 160
+                    height: 40
+                    radius: 8
+                    activeFocusOnTab: true
+                    focus: true // Ця кнопка у фокусі за замовчуванням
+                    
+                    KeyNavigation.right: btnOff
+                    KeyNavigation.down: btnToggle
+                    KeyNavigation.up: btnClose
+
+                    color: activeFocus || mouseOn.containsMouse ? Qt.alpha(themeColors.accentBg, 0.25) : Qt.alpha(themeColors.accentBg, 0.15)
+                    border.color: activeFocus ? themeColors.accentBg : Qt.alpha(themeColors.accentBg, 0.5)
+                    border.width: activeFocus ? 2 : 1
                     
                     Text {
                         anchors.centerIn: parent
                         text: "Увімкнути"
-                        color: "#11111b"
-                        font.pixelSize: 15
+                        color: themeColors.accentBg
+                        font.pixelSize: 14
                         font.bold: true
                     }
-
                     MouseArea {
+                        id: mouseOn
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
-                        onClicked: {
-                            Quickshell.execDetached(["sudo", "/run/current-system/sw/bin/systemctl", "start", "home-assistant.service"]);
-                            Quickshell.execDetached(["notify-send", "-t", "2000", "Home Assistant", "🟢 Сервіс УВІМКНЕНО"]);
-                            Qt.quit();
+                        hoverEnabled: true
+                        onClicked: root.actionTurnOn()
+                    }
+                    Keys.onPressed: (event) => {
+                        if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter || event.key === Qt.Key_Space) {
+                            root.actionTurnOn()
+                            event.accepted = true
                         }
                     }
                 }
 
                 Rectangle {
-                    width: 140
-                    height: 45
-                    radius: 12
-                    color: "#f38ba8"
+                    id: btnOff
+                    width: 160
+                    height: 40
+                    radius: 8
+                    activeFocusOnTab: true
+                    
+                    KeyNavigation.left: btnOn
+                    KeyNavigation.down: btnToggle
+                    KeyNavigation.up: btnClose
+
+                    color: activeFocus || mouseOff.containsMouse ? Qt.alpha("#f38ba8", 0.25) : Qt.alpha("#f38ba8", 0.15)
+                    border.color: activeFocus ? "#f38ba8" : Qt.alpha("#f38ba8", 0.5)
+                    border.width: activeFocus ? 2 : 1
                     
                     Text {
                         anchors.centerIn: parent
                         text: "Вимкнути"
-                        color: "#11111b"
-                        font.pixelSize: 15
+                        color: "#f38ba8"
+                        font.pixelSize: 14
                         font.bold: true
                     }
-
                     MouseArea {
+                        id: mouseOff
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
-                        onClicked: {
-                            Quickshell.execDetached(["sudo", "/run/current-system/sw/bin/systemctl", "stop", "home-assistant.service"]);
-                            Quickshell.execDetached(["notify-send", "-t", "2000", "Home Assistant", "🔴 Сервіс ВИМКНЕНО"]);
-                            Qt.quit();
+                        hoverEnabled: true
+                        onClicked: root.actionTurnOff()
+                    }
+                    Keys.onPressed: (event) => {
+                        if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter || event.key === Qt.Key_Space) {
+                            root.actionTurnOff()
+                            event.accepted = true
                         }
                     }
                 }
             }
 
-            // Кнопка відкриття Web-інтерфейсу
+            // Кнопка Перемикання світла
             Rectangle {
+                id: btnToggle
                 Layout.alignment: Qt.AlignHCenter
-                width: 300
-                height: 45
-                radius: 12
-                color: themeColors.accentBg
+                width: 336
+                height: 40
+                radius: 8
+                activeFocusOnTab: true
+                
+                KeyNavigation.up: btnOn
+                KeyNavigation.down: btnWeb
+                
+                color: activeFocus || mouseToggle.containsMouse ? Qt.alpha("#f9e2af", 0.3) : Qt.alpha("#f9e2af", 0.15)
+                border.color: activeFocus ? "#f9e2af" : Qt.alpha("#f9e2af", 0.5)
+                border.width: activeFocus ? 2 : 1
+                
+                Text {
+                    anchors.centerIn: parent
+                    text: "💡 Перемкнути світло всюди"
+                    color: "#f9e2af"
+                    font.pixelSize: 14
+                    font.bold: true
+                }
+                MouseArea {
+                    id: mouseToggle
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    hoverEnabled: true
+                    onClicked: root.actionToggleLights()
+                }
+                Keys.onPressed: (event) => {
+                    if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter || event.key === Qt.Key_Space) {
+                        root.actionToggleLights()
+                        event.accepted = true
+                    }
+                }
+            }
+
+            // Web UI
+            Rectangle {
+                id: btnWeb
+                Layout.alignment: Qt.AlignHCenter
+                width: 336
+                height: 40
+                radius: 8
+                activeFocusOnTab: true
+                
+                KeyNavigation.up: btnToggle
+                
+                color: activeFocus || mouseWeb.containsMouse ? Qt.darker(themeColors.accentBg, 1.1) : themeColors.accentBg
+                border.color: themeColors.windowFg
+                border.width: activeFocus ? 2 : 0
                 
                 Text {
                     anchors.centerIn: parent
                     text: "🌐 Відкрити Web-інтерфейс"
                     color: themeColors.windowBg
-                    font.pixelSize: 15
+                    font.pixelSize: 14
                     font.bold: true
                 }
-
                 MouseArea {
+                    id: mouseWeb
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
-                    onClicked: {
-                        Quickshell.execDetached(["xdg-open", "http://localhost:8123"]);
-                        Qt.quit();
+                    hoverEnabled: true
+                    onClicked: root.actionWeb()
+                }
+                Keys.onPressed: (event) => {
+                    if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter || event.key === Qt.Key_Space) {
+                        root.actionWeb()
+                        event.accepted = true
                     }
                 }
             }
         }
-        
-        Rectangle {
-            width: 24
-            height: 24
-            radius: 12
-            color: themeColors.windowBg
-            anchors.top: parent.top
-            anchors.right: parent.right
-            anchors.margins: 12
-            
-            Text {
-                anchors.centerIn: parent
-                text: "✕"
-                color: themeColors.windowFg
-                font.bold: true
-                font.pixelSize: 12
-            }
-            
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                onClicked: Qt.quit()
-            }
-        }
+    }
+
+    function actionTurnOn() {
+        Quickshell.execDetached(["sudo", "/run/current-system/sw/bin/systemctl", "start", "home-assistant.service"]);
+        Quickshell.execDetached(["notify-send", "-t", "2000", "Home Assistant", "🟢 Сервіс УВІМКНЕНО"]);
+        Qt.quit();
+    }
+    function actionTurnOff() {
+        Quickshell.execDetached(["sudo", "/run/current-system/sw/bin/systemctl", "stop", "home-assistant.service"]);
+        Quickshell.execDetached(["notify-send", "-t", "2000", "Home Assistant", "🔴 Сервіс ВИМКНЕНО"]);
+        Qt.quit();
+    }
+    function actionToggleLights() {
+        Quickshell.execDetached(["/home/sasha/.local/bin/toggle-all-lights"]);
+        Qt.quit();
+    }
+    function actionWeb() {
+        Quickshell.execDetached(["xdg-open", "http://localhost:8123"]);
+        Qt.quit();
     }
 }

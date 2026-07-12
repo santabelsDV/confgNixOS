@@ -446,6 +446,11 @@ environment.sessionVariables = {
   allowedUDPPorts = [ 5353 ];    # Усі UDP порти тут
   # АБО просто довіряємо всьому трафіку з віртуалок (найзручніше для лаб)
   trustedInterfaces = [ "virbr0" ];
+  
+  # Дозволяємо вхідний UDP трафік з локальної мережі для авто-пошуку (CozyLife)
+  extraCommands = ''
+    iptables -A nixos-fw -p udp -s 192.168.0.0/16 -j nixos-fw-accept
+  '';
 };
 
 

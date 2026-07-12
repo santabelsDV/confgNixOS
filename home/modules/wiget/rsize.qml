@@ -5,8 +5,8 @@ import Quickshell
 
 Window {
     id: root
-    width: 400
-    height: 260
+    width: 420
+    height: 250
     color: "transparent"
     visible: true
     title: "Display Scale"
@@ -18,7 +18,6 @@ Window {
         onActivated: Qt.quit()
     }
 
-    // Динамічно зчитуємо системну тему Noctalia
     property var themeColors: {
         var xhr = new XMLHttpRequest();
         xhr.open("GET", "file:///home/sasha/.config/gtk-3.0/noctalia.css", false);
@@ -45,97 +44,188 @@ Window {
 
     Rectangle {
         anchors.fill: parent
-        radius: 20
-        color: Qt.alpha(themeColors.headerBg, 0.8) // Напівпрозорий фон (80% непрозорості)
-        border.color: themeColors.accentBg
-        border.width: 2
+        radius: 12
+        color: Qt.alpha(themeColors.headerBg, 0.85)
+        border.color: Qt.alpha(themeColors.windowFg, 0.1)
+        border.width: 1
 
         ColumnLayout {
             anchors.fill: parent
-            anchors.margins: 25
-            spacing: 20
+            anchors.margins: 16
+            spacing: 12
+
+            // Верхня панель (Header)
+            RowLayout {
+                Layout.fillWidth: true
+                
+                Text {
+                    text: "Налаштування дисплея"
+                    color: themeColors.windowFg
+                    font.pixelSize: 16
+                    font.bold: true
+                    Layout.fillWidth: true
+                }
+                
+                // Кнопка закриття як у буфері
+                Rectangle {
+                    id: btnClose
+                    width: 28
+                    height: 28
+                    radius: 8
+                    activeFocusOnTab: true
+                    KeyNavigation.down: btn100
+                    
+                    color: activeFocus || mouseClose.containsMouse ? Qt.alpha(themeColors.windowFg, 0.15) : Qt.alpha(themeColors.windowFg, 0.05)
+                    border.color: activeFocus ? themeColors.windowFg : "transparent"
+                    border.width: activeFocus ? 1 : 0
+                    
+                    Text {
+                        anchors.centerIn: parent
+                        text: "✕"
+                        color: themeColors.windowFg
+                        font.pixelSize: 14
+                    }
+                    MouseArea {
+                        id: mouseClose
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        hoverEnabled: true
+                        onClicked: Qt.quit()
+                    }
+                    Keys.onPressed: (event) => {
+                        if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter || event.key === Qt.Key_Space) {
+                            Qt.quit()
+                            event.accepted = true
+                        }
+                    }
+                }
+            }
+
+            // Лінія-роздільник
+            Rectangle {
+                Layout.fillWidth: true
+                height: 1
+                color: Qt.alpha(themeColors.windowFg, 0.1)
+            }
 
             // Секція масштабу
             Text {
-                text: "🔍 Масштаб дисплея"
-                color: themeColors.windowFg
-                font.pixelSize: 18
-                font.bold: true
-                Layout.alignment: Qt.AlignHCenter
+                text: "Масштаб (eDP-1)"
+                color: Qt.alpha(themeColors.windowFg, 0.7)
+                font.pixelSize: 13
+                Layout.topMargin: 4
             }
 
             RowLayout {
                 Layout.alignment: Qt.AlignHCenter
-                spacing: 15
+                spacing: 12
 
                 Rectangle {
-                    width: 90
-                    height: 40
-                    radius: 12
-                    color: themeColors.accentBg
+                    id: btn100
+                    width: 104
+                    height: 36
+                    radius: 8
+                    activeFocusOnTab: true
+                    focus: true
+                    KeyNavigation.right: btn125
+                    KeyNavigation.down: btn60
+                    KeyNavigation.up: btnClose
+
+                    color: activeFocus || mouse100.containsMouse ? Qt.alpha(themeColors.accentBg, 0.25) : Qt.alpha(themeColors.accentBg, 0.15)
+                    border.color: activeFocus ? themeColors.accentBg : Qt.alpha(themeColors.accentBg, 0.5)
+                    border.width: activeFocus ? 2 : 1
                     
                     Text {
                         anchors.centerIn: parent
                         text: "100%"
-                        color: themeColors.windowBg
-                        font.pixelSize: 15
+                        color: themeColors.accentBg
+                        font.pixelSize: 14
                         font.bold: true
                     }
-
                     MouseArea {
+                        id: mouse100
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
-                        onClicked: {
-                            Quickshell.execDetached(["niri", "msg", "output", "eDP-1", "scale", "1.0"]);
-                            Qt.quit();
+                        hoverEnabled: true
+                        onClicked: root.actionSetScale("1.0")
+                    }
+                    Keys.onPressed: (event) => {
+                        if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter || event.key === Qt.Key_Space) {
+                            root.actionSetScale("1.0")
+                            event.accepted = true
                         }
                     }
                 }
 
                 Rectangle {
-                    width: 90
-                    height: 40
-                    radius: 12
-                    color: themeColors.accentBg
+                    id: btn125
+                    width: 104
+                    height: 36
+                    radius: 8
+                    activeFocusOnTab: true
+                    KeyNavigation.left: btn100
+                    KeyNavigation.right: btn150
+                    KeyNavigation.down: btn165
+                    KeyNavigation.up: btnClose
+
+                    color: activeFocus || mouse125.containsMouse ? Qt.alpha(themeColors.accentBg, 0.25) : Qt.alpha(themeColors.accentBg, 0.15)
+                    border.color: activeFocus ? themeColors.accentBg : Qt.alpha(themeColors.accentBg, 0.5)
+                    border.width: activeFocus ? 2 : 1
                     
                     Text {
                         anchors.centerIn: parent
                         text: "125%"
-                        color: themeColors.windowBg
-                        font.pixelSize: 15
+                        color: themeColors.accentBg
+                        font.pixelSize: 14
                         font.bold: true
                     }
-
                     MouseArea {
+                        id: mouse125
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
-                        onClicked: {
-                            Quickshell.execDetached(["niri", "msg", "output", "eDP-1", "scale", "1.25"]);
-                            Qt.quit();
+                        hoverEnabled: true
+                        onClicked: root.actionSetScale("1.25")
+                    }
+                    Keys.onPressed: (event) => {
+                        if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter || event.key === Qt.Key_Space) {
+                            root.actionSetScale("1.25")
+                            event.accepted = true
                         }
                     }
                 }
 
                 Rectangle {
-                    width: 90
-                    height: 40
-                    radius: 12
-                    color: themeColors.accentBg
+                    id: btn150
+                    width: 104
+                    height: 36
+                    radius: 8
+                    activeFocusOnTab: true
+                    KeyNavigation.left: btn125
+                    KeyNavigation.down: btn165
+                    KeyNavigation.up: btnClose
+
+                    color: activeFocus || mouse150.containsMouse ? Qt.alpha(themeColors.accentBg, 0.25) : Qt.alpha(themeColors.accentBg, 0.15)
+                    border.color: activeFocus ? themeColors.accentBg : Qt.alpha(themeColors.accentBg, 0.5)
+                    border.width: activeFocus ? 2 : 1
                     
                     Text {
                         anchors.centerIn: parent
                         text: "150%"
-                        color: themeColors.windowBg
-                        font.pixelSize: 15
+                        color: themeColors.accentBg
+                        font.pixelSize: 14
                         font.bold: true
                     }
-
                     MouseArea {
+                        id: mouse150
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
-                        onClicked: {
-                            Quickshell.execDetached(["niri", "msg", "output", "eDP-1", "scale", "1.5"]);
-                            Qt.quit();
+                        hoverEnabled: true
+                        onClicked: root.actionSetScale("1.5")
+                    }
+                    Keys.onPressed: (event) => {
+                        if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter || event.key === Qt.Key_Space) {
+                            root.actionSetScale("1.5")
+                            event.accepted = true
                         }
                     }
                 }
@@ -143,93 +233,97 @@ Window {
 
             // Секція герцовки
             Text {
-                text: "⚡ Частота оновлення"
-                color: themeColors.windowFg
-                font.pixelSize: 18
-                font.bold: true
-                Layout.alignment: Qt.AlignHCenter
-                Layout.topMargin: 5
+                text: "Частота оновлення"
+                color: Qt.alpha(themeColors.windowFg, 0.7)
+                font.pixelSize: 13
+                Layout.topMargin: 8
             }
 
             RowLayout {
                 Layout.alignment: Qt.AlignHCenter
-                spacing: 15
+                spacing: 12
 
                 Rectangle {
-                    width: 140
-                    height: 40
-                    radius: 12
-                    color: themeColors.accentBg
+                    id: btn60
+                    width: 162
+                    height: 36
+                    radius: 8
+                    activeFocusOnTab: true
+                    KeyNavigation.right: btn165
+                    KeyNavigation.up: btn100
+
+                    color: activeFocus || mouse60.containsMouse ? Qt.alpha(themeColors.accentBg, 0.25) : Qt.alpha(themeColors.accentBg, 0.15)
+                    border.color: activeFocus ? themeColors.accentBg : Qt.alpha(themeColors.accentBg, 0.5)
+                    border.width: activeFocus ? 2 : 1
                     
                     Text {
                         anchors.centerIn: parent
                         text: "60 Hz (Економія)"
-                        color: themeColors.windowBg
-                        font.pixelSize: 15
+                        color: themeColors.accentBg
+                        font.pixelSize: 14
                         font.bold: true
                     }
-
                     MouseArea {
+                        id: mouse60
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
-                        onClicked: {
-                            Quickshell.execDetached(["niri", "msg", "output", "eDP-1", "mode", "2560x1600@60.000"]);
-                            Quickshell.execDetached(["notify-send", "-a", "Дисплей", "-t", "2000", "🔄 Герцовка", "60 Hz"]);
-                            Qt.quit();
+                        hoverEnabled: true
+                        onClicked: root.actionSetHz("60", "2560x1600@60.000")
+                    }
+                    Keys.onPressed: (event) => {
+                        if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter || event.key === Qt.Key_Space) {
+                            root.actionSetHz("60", "2560x1600@60.000")
+                            event.accepted = true
                         }
                     }
                 }
 
                 Rectangle {
-                    width: 140
-                    height: 40
-                    radius: 12
-                    color: themeColors.accentBg
+                    id: btn165
+                    width: 162
+                    height: 36
+                    radius: 8
+                    activeFocusOnTab: true
+                    KeyNavigation.left: btn60
+                    KeyNavigation.up: btn150
+
+                    color: activeFocus || mouse165.containsMouse ? Qt.alpha(themeColors.accentBg, 0.25) : Qt.alpha(themeColors.accentBg, 0.15)
+                    border.color: activeFocus ? themeColors.accentBg : Qt.alpha(themeColors.accentBg, 0.5)
+                    border.width: activeFocus ? 2 : 1
                     
                     Text {
                         anchors.centerIn: parent
                         text: "165 Hz (Геймінг)"
-                        color: themeColors.windowBg
-                        font.pixelSize: 15
+                        color: themeColors.accentBg
+                        font.pixelSize: 14
                         font.bold: true
                     }
-
                     MouseArea {
+                        id: mouse165
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
-                        onClicked: {
-                            Quickshell.execDetached(["niri", "msg", "output", "eDP-1", "mode", "2560x1600@165.002"]);
-                            Quickshell.execDetached(["notify-send", "-a", "Дисплей", "-t", "2000", "🔄 Герцовка", "165 Hz"]);
-                            Qt.quit();
+                        hoverEnabled: true
+                        onClicked: root.actionSetHz("165", "2560x1600@165.002")
+                    }
+                    Keys.onPressed: (event) => {
+                        if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter || event.key === Qt.Key_Space) {
+                            root.actionSetHz("165", "2560x1600@165.002")
+                            event.accepted = true
                         }
                     }
                 }
             }
         }
-        
-        // Кнопка закриття
-        Rectangle {
-            width: 24
-            height: 24
-            radius: 12
-            color: themeColors.windowBg
-            anchors.top: parent.top
-            anchors.right: parent.right
-            anchors.margins: 12
-            
-            Text {
-                anchors.centerIn: parent
-                text: "✕"
-                color: themeColors.windowFg
-                font.bold: true
-                font.pixelSize: 12
-            }
-            
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                onClicked: Qt.quit()
-            }
-        }
+    }
+
+    function actionSetScale(scale) {
+        Quickshell.execDetached(["niri", "msg", "output", "eDP-1", "scale", scale]);
+        Qt.quit();
+    }
+    
+    function actionSetHz(label, mode) {
+        Quickshell.execDetached(["niri", "msg", "output", "eDP-1", "mode", mode]);
+        Quickshell.execDetached(["notify-send", "-a", "Дисплей", "-t", "2000", "🔄 Герцовка", label + " Hz"]);
+        Qt.quit();
     }
 }
