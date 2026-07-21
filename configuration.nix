@@ -86,6 +86,7 @@
   # services.xserver.libinput.enable = true;
   programs.fish.enable = true;
 
+
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.sasha = {
     shell = pkgs.fish;
@@ -103,6 +104,7 @@
 
   # Install firefox.
   programs.firefox.enable = true;
+  programs.chromium.enable = false; # Google Chrome використовує власний пакет
 
   # Вказуємо використовувати пропрієтарний драйвер
   services.xserver.videoDrivers = [ "nvidia" ];
@@ -213,16 +215,23 @@
      pciutils
      nvtopPackages.full     
      
+     google-chrome
+
      vesktop
+     discord
      nodejs_24
     (brave.override {
        commandLineArgs = [
          "--ozone-platform=wayland"
-         "--enable-features=WaylandWindowDecorations"
+         "--enable-features=WaylandWindowDecorations,VaapiVideoDecodeLinuxGL,VaapiVideoEncoder,VaapiVideoDecoder,CanvasOopRasterization"
          "--enable-wayland-ime"
-         # Додаємо EGL для кращої сумісності з NVIDIA на Wayland
-         "--use-gl=egl" 
-         # Видалено --disable-gpu-sandbox, щоб уникнути конфліктів із пам'яттю
+         # ANGLE + OpenGL для NVIDIA на Wayland (egl-gles2 не підтримується)
+         "--use-gl=egl-angle"
+         "--use-angle=opengl"
+         # Апаратне декодування відео
+         "--enable-accelerated-video-decode"
+         "--enable-accelerated-video-encode"
+         "--ignore-gpu-blocklist"
        ];
      })
 
@@ -328,6 +337,8 @@
 
   ];
 
+  
+
 
   services.thermald.enable = true;
   services.fwupd.enable = true;
@@ -392,6 +403,13 @@ fonts.fontconfig.enable = true;
   };
 
 
+
+  # Fix for screen sharing in xdg-desktop-portal-gnome crashing on NVIDIA with Vulkan
+  systemd.user.services.xdg-desktop-portal-gnome = {
+    environment = {
+      GSK_RENDERER = "gl";
+    };
+  };
 
 environment.sessionVariables = {
     BROWSER = "firefox";

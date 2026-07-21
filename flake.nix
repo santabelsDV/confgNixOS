@@ -14,8 +14,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Zen Browser (замінює fetchTarball + flake-compat хак)
-    zen-browser.url = "github:youwen5/zen-browser-flake";
+
 
     # Noctalia Shell — desktop shell для Wayland (бар, лаунчер, нотифікації тощо)
     noctalia = {
@@ -24,7 +23,7 @@
     };
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, zen-browser, noctalia, ... }:
+  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, noctalia, ... }:
   let
     system = "x86_64-linux";
 
@@ -41,7 +40,7 @@
       inherit system;
 
       specialArgs = {
-        inherit zen-browser noctalia;
+        inherit noctalia;
       };
 
       modules = [
@@ -50,7 +49,7 @@
 
         # Системна конфігурація
         ./configuration.nix
-        ./zen.nix
+
         ./niri.nix
         noctalia.nixosModules.default
 

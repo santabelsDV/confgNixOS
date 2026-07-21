@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 let
   cozylife = pkgs.buildHomeAssistantComponent {
@@ -48,6 +48,9 @@ in
       };
     };
   };
+
+  # Вимикаємо автозапуск Home Assistant під час старту системи
+  systemd.services.home-assistant.wantedBy = lib.mkForce [];
 
   # Дозволяємо користувачу sasha вмикати/вимикати Home Assistant без пароля
   security.sudo.extraRules = [

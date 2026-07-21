@@ -13,6 +13,12 @@ Window {
     
     flags: Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint
 
+    onActiveChanged: {
+        if (!active) {
+            Qt.quit()
+        }
+    }
+
     Shortcut {
         sequence: "Escape"
         onActivated: Qt.quit()

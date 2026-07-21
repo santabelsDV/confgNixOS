@@ -50,7 +50,7 @@ spawn-at-startup "xwayland-satellite"
 spawn-at-startup "dbus-update-activation-environment" "--systemd" "WAYLAND_DISPLAY" "XDG_CURRENT_DESKTOP=niri"
 
 // Чекаємо на ScreenCast інтерфейс Niri і перезапускаємо GNOME портал
-spawn-at-startup "sh" "-c" "sleep 2 && systemctl --user restart xdg-desktop-portal-gnome.service xdg-desktop-portal.service"
+spawn-at-startup "sh" "-c" "while ! busctl --user status org.gnome.Mutter.ScreenCast >/dev/null 2>&1; do sleep 0.2; done; systemctl --user restart xdg-desktop-portal-gnome.service xdg-desktop-portal.service"
 
 spawn-at-startup "noctalia"
 
@@ -82,6 +82,7 @@ binds {
   Mod+Return { spawn "kitty"; }
   Mod+Q { close-window; }
   Mod+B { spawn "firefox"; }
+  Mod+Y { spawn "firefox" "https://www.youtube.com/"; }
   Mod+T { spawn "Telegram"; }
 
   Mod+Shift+E { quit; }
