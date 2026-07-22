@@ -21,9 +21,18 @@
       url = "github:noctalia-dev/noctalia";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
+
+
+
+    antigravity-nix = {
+      url = "github:jacopone/antigravity-nix";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
+
+
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, noctalia, ... }:
+  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, noctalia, antigravity-nix, ... }:
   let
     system = "x86_64-linux";
 
@@ -51,7 +60,15 @@
         ./configuration.nix
 
         ./niri.nix
+        
         noctalia.nixosModules.default
+        {
+         environment.systemPackages = [
+            antigravity-nix.packages.x86_64-linux.default # Base App
+            antigravity-nix.packages.x86_64-linux.google-antigravity-ide # IDE
+            antigravity-nix.packages.x86_64-linux.google-antigravity-cli # CLI
+          ];
+        }
 
         # Home Manager як NixOS-модуль
         home-manager.nixosModules.home-manager
